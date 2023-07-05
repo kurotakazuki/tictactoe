@@ -38,6 +38,38 @@ func (b *Board) show() {
 	}
 }
 
+//マルバツの勝ち負けを判定する関数
+func (b *Board) judge() string {
+    winningPatterns := [8][3]int{
+        {0, 1, 2}, // top row
+        {3, 4, 5}, // middle row
+        {6, 7, 8}, // bottom row
+        {0, 3, 6}, // left column
+        {1, 4, 7}, // middle column
+        {2, 5, 8}, // right column
+        {0, 4, 8}, // diagonal from left top to right bottom
+        {2, 4, 6}, // diagonal from right top to left bottom
+    }
+
+    for _, pattern := range winningPatterns {
+        if b.tokens[pattern[0]] != 0 && b.tokens[pattern[0]] == b.tokens[pattern[1]] && b.tokens[pattern[1]] == b.tokens[pattern[2]] {
+            if b.tokens[pattern[0]] == 1 {
+                return "o"
+            } else if b.tokens[pattern[0]] == 2 {
+                return "x"
+            }
+        }
+    }
+
+    for _, token := range b.tokens {
+        if token == 0 {
+            return "yet"
+        }
+    }
+
+    return "draw"
+}
+
 func main() {
 	i := 0
 	b := &Board{tokens: []int{0, 0, 0, 0, 0, 0, 0, 0, 0}}
@@ -59,7 +91,13 @@ func main() {
 		col, _ := strconv.Atoi(arr[1])
 		b.put(row, col, player)
 		b.show()
-
+    	if b.judge() == "o"{
+    		fmt.Printf("Player 1 won\n")
+    		break
+    	}else if b.judge() == "x"{
+    		fmt.Printf("Player 2 won\n")
+    		break
+    	}
 		i++
 	}
 }
